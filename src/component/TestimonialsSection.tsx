@@ -70,7 +70,12 @@ export default function TestimonialsSection() {
                         modules={[Navigation, Autoplay]}
                         spaceBetween={50}
                         loop={true}
-                        autoplay={{ delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                        speed={600}
+                        autoplay={{
+                            delay: 5000,
+                            disableOnInteraction: false,
+                            pauseOnMouseEnter: true
+                        }}
                         breakpoints={{
                             320: { slidesPerView: 1 },
                             481: { slidesPerView: 1 },

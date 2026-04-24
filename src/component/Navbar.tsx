@@ -86,36 +86,42 @@ interface DropdownProps {
 
 function Dropdown({ children, className = "" }: DropdownProps) {
     const [open, setOpen] = useState(false);
-    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const clearPending = useCallback(() => {
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-            timeoutRef.current = null;
+    const clearPendingClose = useCallback(() => {
+        if (closeTimeoutRef.current) {
+            clearTimeout(closeTimeoutRef.current);
+            closeTimeoutRef.current = null;
         }
     }, []);
 
     const handleEnter = useCallback(() => {
-        clearPending();
+        clearPendingClose();
         setOpen(true);
-    }, [clearPending]);
+    }, [clearPendingClose]);
 
     const handleLeave = useCallback(() => {
-        clearPending();
-        timeoutRef.current = setTimeout(() => {
+        clearPendingClose();
+        closeTimeoutRef.current = setTimeout(() => {
             setOpen(false);
         }, 200);
-    }, [clearPending]);
+    }, [clearPendingClose]);
 
     // Close on Escape
     useEffect(() => {
         const handleKey = (e: KeyboardEvent) => {
-            if (e.key === "Escape") setOpen(false);
+            if (e.key === "Escape") {
+                clearPendingClose();
+                setOpen(false);
+            }
         };
         window.addEventListener("keydown", handleKey);
-        return () => window.removeEventListener("keydown", handleKey);
-    }, []);
+        return () => {
+            window.removeEventListener("keydown", handleKey);
+            clearPendingClose();
+        };
+    }, [clearPendingClose]);
 
     return (
         <div
@@ -145,7 +151,6 @@ export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [activeHireTab, setActiveHireTab] = useState(0);
-    const mobileTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -532,6 +537,12 @@ export default function Navbar() {
                 </div>
 
                 {/* Responsive menu */}
+                {mobileOpen && (
+                    <div
+                        className="mobile-nav-backdrop"
+                        onClick={() => setMobileOpen(false)}
+                    />
+                )}
                 <div className="nav-menu-wrapper nav-menu-wrapper-responsive">
                     <div className="header-logo">
                         <Link href="/" aria-current="page" className="brand-2 w-nav-brand w--current">
