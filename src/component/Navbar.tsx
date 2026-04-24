@@ -1,0 +1,937 @@
+"use client";
+
+import { useEffect, useState, useRef, useCallback } from "react";
+import Image from "next/image";
+import Link from "next/link";
+
+const services = [
+    { title: "Custom Software Development", desc: "Tailored solutions to boost your business growth and success.", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e5135739f5d51d6fe101ba_mortarboard.svg", href: "/custom-software-development" },
+    { title: "Web Development", desc: "Robust and responsive websites to enhance online presence.", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e51357b58f0e244a2ca5f9_code.svg", href: "/web-app-development" },
+    { title: "Mobile App development", desc: "High-performance mobile apps to strengthen user experience across platforms.", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e5135790a4514439410646_smartphone.svg", href: "/mobile-app-development" },
+    { title: "UI/UX Design", desc: "intuitive interfaces to deliver seamless experiences, driving customer satisfaction", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e51357a7a0b80ad7046e29_pen-tool-2.svg", href: "/ui-ux-design" },
+    { title: "Enterprise Solutions", desc: "Custom enterprise solutions to optimize your business operations", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e513578f0d3d5c09297441_bookmark-check.svg", href: "/enterprise-solutions" },
+    { title: "Artificial Intelligence & Machine Learning", desc: "Leverage AI and ML to enhance predictive capabilities for smarter business decisions", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e513578de64500e0ee973e_comment-2-text.svg", href: "/artificial-intelligence-machine-learning" },
+    { title: "DevOps & IT Consulting", desc: "Optimize your SDLC with expert DevOps solutions and IT strategy consulting", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e513574435fe01b4a15082_brackets.svg", href: "/devops-it-consulting" },
+    { title: "Blockchain Development", desc: "Secure, scalable blockchain solutions and DApps, fostering trust and innovation across industries.", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e51357116b8df5be67af02_file-code.svg", href: "/blockchain-development" },
+    { title: "Quality Assurance & Testing", desc: "Ensure software quality with SQA and automated testing for flawless performance", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e51357c55e95d7678d76d1_file-check.svg", href: "/quality-assurance-testing" },
+];
+
+const industries = [
+    { title: "E-commerce", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e8ac981e28959714a2f115_shopping-cart-2.svg", href: "/contact-us" },
+    { title: "Fintech", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e8ac757f42db50faac62e2_cash.svg", href: "/contact-us" },
+    { title: "Healthcare", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e8ac75fe33ee88d4b91161_heart.svg", href: "/contact-us" },
+    { title: "Ed-tech", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e8ac759524899b2153d15d_book-open.svg", href: "/contact-us" },
+    { title: "On-Demand", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e8ac75926ae2980a00204c_star.svg", href: "/contact-us" },
+    { title: "Food & Groceries", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e8ac756fed3563f0f8a87b_cutlery-2.svg", href: "/contact-us" },
+    { title: "Real Estate", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e8ac75ed32b6c5bd562835_home-4.svg", href: "/contact-us" },
+    { title: "Blockchain", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e8ac756c0effb71bb86671_link-2.svg", href: "/contact-us" },
+];
+
+const approaches = [
+    { title: "Product Development", desc: "Developing strategic roadmaps, MVPs, and agile solutions for faster time-to-market, scalable growth, and cross-platform reach.", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e8ac7538f9d6c7898c999d_box.svg", href: "/contact-us" },
+    { title: "Staff Augmentation", desc: "On-demand access to skilled developers and IT specialists, seamlessly scaling your team across front-end, back-end, and emerging tech.", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e8ac758265000c87581f28_user-arrow-right.svg", href: "/contact-us" },
+    { title: "Dedicated Teams", desc: "End-to-end project ownership with smooth integration, diverse expertise, and continuous delivery for long-term innovation.", icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e51357c55e95d7678d76d1_file-check.svg", href: "/contact-us" },
+];
+
+const hireTabs = [
+    {
+        label: "Backend Developers",
+        icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e51357b58f0e244a2ca5f9_code.svg",
+        items: [
+            { title: "Node.js Developers", desc: "Build fast, scalable, and real-time applications using JavaScript/TypeScript." },
+            { title: "Python Developers (Django/Flask)", desc: "Develop secure and efficient backend systems for modern web apps." },
+            { title: "Java Developers (Spring Boot)", desc: "Enterprise-grade applications with high performance and reliability." },
+            { title: "PHP Developers (Laravel/Symfony)", desc: "Create dynamic websites and APIs with PHP frameworks." },
+            { title: "Ruby on Rails Developers", desc: "Scalable and maintainable web applications with Ruby on Rails." },
+            { title: "Go (Golang) Developers", desc: "High-performance backend services and microservices." },
+            { title: ".NET Developers", desc: "Build enterprise solutions with C# and .NET Core." },
+            { title: "Database Developers", desc: "Design, manage, and optimize relational and NoSQL databases." },
+            { title: "API Developers", desc: "Develop RESTful and GraphQL APIs for seamless integrations." },
+            { title: "Cloud & DevOps Backend Developers", desc: "Create dynamic websites and APIs with PHP frameworks." },
+        ],
+    },
+    {
+        label: "Frontend Developers",
+        icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e51357116b8df5be67af02_file-code.svg",
+        items: [
+            { title: "React.js Developers", desc: "Build dynamic and responsive web applications with modern React frameworks." },
+            { title: "Angular Developers", desc: "Create scalable, maintainable, and high-performance frontend solutions." },
+            { title: "Vue.js Developers", desc: "Develop elegant, lightweight, and fast user interfaces." },
+            { title: "HTML/CSS Developers", desc: "Design pixel-perfect layouts with clean, semantic code." },
+            { title: "JavaScript Developers", desc: "Enhance interactivity and functionality across web applications." },
+            { title: "TypeScript Developers", desc: "Build scalable, maintainable, and error-free frontend applications." },
+            { title: "UI/UX Developers", desc: "Translate design mockups into intuitive and engaging user experiences." },
+            { title: "Mobile Frontend Developers", desc: "Build responsive web apps and hybrid mobile applications." },
+        ],
+    },
+    {
+        label: "Mobile App developers",
+        icon: "https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e8ac751cf12a69f3cc64c4_smartphone.svg",
+        items: [
+            { title: "iOS Developers (Swift/Objective-C)", desc: "Build fast, secure, and native iOS applications." },
+            { title: "Android Developers (Kotlin/Java)", desc: "Develop robust, scalable, and feature-rich Android apps." },
+            { title: "Cross-Platform Developers (Flutter, React Native)", desc: "Create apps that run smoothly on both iOS and Android." },
+            { title: "UI/UX Mobile Developers", desc: "Design intuitive, engaging, and visually appealing mobile interfaces." },
+            { title: "Mobile Backend Integration Developers", desc: "Connect apps with secure, efficient backend systems." },
+            { title: "Hybrid Mobile App Developers", desc: "Build cost-effective hybrid apps for multiple platforms." },
+            { title: "Mobile Game Developers", desc: "Develop engaging, interactive mobile games with smooth performance." },
+        ],
+    },
+];
+
+interface DropdownProps {
+    children: React.ReactNode;
+    className?: string;
+}
+
+function Dropdown({ children, className = "" }: DropdownProps) {
+    const [open, setOpen] = useState(false);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const clearPending = useCallback(() => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+    }, []);
+
+    const handleEnter = useCallback(() => {
+        clearPending();
+        setOpen(true);
+    }, [clearPending]);
+
+    const handleLeave = useCallback(() => {
+        clearPending();
+        timeoutRef.current = setTimeout(() => {
+            setOpen(false);
+        }, 200);
+    }, [clearPending]);
+
+    // Close on Escape
+    useEffect(() => {
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setOpen(false);
+        };
+        window.addEventListener("keydown", handleKey);
+        return () => window.removeEventListener("keydown", handleKey);
+    }, []);
+
+    return (
+        <div
+            ref={containerRef}
+            className={`dropdown w-dropdown ${className} ${open ? "w--open" : ""}`}
+            onMouseEnter={handleEnter}
+            onMouseLeave={handleLeave}
+        >
+            {children}
+        </div>
+    );
+}
+
+function DropdownToggle({ children }: { children: React.ReactNode }) {
+    return <div className="dropdown-toggle w-dropdown-toggle">{children}</div>;
+}
+
+function DropdownList({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+    return (
+        <nav className={`w-dropdown-list ${className}`}>
+            {children}
+        </nav>
+    );
+}
+
+export default function Navbar() {
+    const [scrolled, setScrolled] = useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [activeHireTab, setActiveHireTab] = useState(0);
+    const mobileTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 50);
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    useEffect(() => {
+        if (mobileOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [mobileOpen]);
+
+    // Mobile accordion dropdown
+    const [mobileDropdowns, setMobileDropdowns] = useState<Record<string, boolean>>({});
+    const toggleMobileDropdown = (key: string) => {
+        setMobileDropdowns((prev) => ({ ...prev, [key]: !prev[key] }));
+    };
+
+    return (
+        <div
+            data-animation="default"
+            data-collapse="medium"
+            data-duration="400"
+            data-easing="ease"
+            data-easing2="ease"
+            role="banner"
+            className={`navbar-2 navbar-transparent w-nav ${scrolled ? "scrolled" : ""}`}
+        >
+            <div className="container-2 full-with-text-container w-container">
+                {/* Desktop menu */}
+                <div className="nav-menu-wrapper hidden-responsive">
+                    <div className="header-logo">
+                        <Link href="/" aria-current="page" className="w-nav-brand w--current">
+                            <Image
+                                src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/6944084a200d58ed37cd84ce_company-logo.svg"
+                                alt=""
+                                width={140}
+                                height={40}
+                                className="image-34"
+                            />
+                        </Link>
+                    </div>
+                    <nav role="navigation" className="nav-menu-2 w-nav-menu">
+                        {/* Our Services */}
+                        <Dropdown className="mega-menu-wrap-dropdown">
+                            <DropdownToggle>
+                                <div className="link-text-wrap">
+                                    <p className="nav-item-title nav-title-white">Our services</p>
+                                </div>
+                                <svg
+                                    className="nav-dropdown-icon nav-dropdown-icon-white w-icon-dropdown-toggle"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="3"
+                                >
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                                <div className="nav-hover" />
+                            </DropdownToggle>
+                            <DropdownList className="mega-menu-wrap">
+                                <div className="mega-menu-container">
+                                    <div className="nav-dropdown-column menu-left-side">
+                                        <div className="nav-dropdown-link-wrapper">
+                                            <ul role="list" className="menu-service-list">
+                                                {services.map((s, i) => (
+                                                    <li key={i} className="menu-service-list-item">
+                                                        <Link href={s.href} className="menu-service-list-card w-inline-block">
+                                                            <Image
+                                                                src={s.icon}
+                                                                alt="icon"
+                                                                width={24}
+                                                                height={24}
+                                                                className="menu-service-list-icon"
+                                                            />
+                                                            <p className="menu-service-list-title">
+                                                                <strong className="bold-text-2">{s.title} </strong>
+                                                                {s.desc}
+                                                            </p>
+                                                            <Image
+                                                                src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68dd06f7fc82020459e20e4f_arrow-right-green.svg"
+                                                                alt="icon"
+                                                                width={16}
+                                                                height={16}
+                                                                className="menu-service-list-arrow-icon"
+                                                            />
+                                                        </Link>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div className="menu-right-side">
+                                        <div className="menu-company-header">
+                                            <h3 className="menu-company-header-title">Not Sure where to start?</h3>
+                                            <p className="menu-company-header-description">
+                                                Connect with our experts to receive a free estimate and streamline your workflow at no extra cost. Why wait? Give it a try today!
+                                            </p>
+                                        </div>
+                                        <div className="header-link-wrapper">
+                                            <div className="contact-us-card">
+                                                <div className="contact-us-card-icon menu-contact-us-card-icon">
+                                                    <Image
+                                                        src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e51aa310530dbf53f8f4c2_email-black.svg"
+                                                        alt="icon"
+                                                        width={20}
+                                                        height={20}
+                                                        className="image-22 menu-contact-us-card-icon-img"
+                                                    />
+                                                </div>
+                                                <Link
+                                                    href="mailto:sales@amentotech.com"
+                                                    className="link-2 menu-contact-us-card-link"
+                                                >
+                                                    Talk To Sales{" "}
+                                                    <span className="menu-contact-us-card-link-info menu-contact-us-card-link-info-header">
+                                                        sales@amentotech.com
+                                                    </span>
+                                                </Link>
+                                            </div>
+                                        </div>
+                                        <figure className="menu-contact-wrap">
+                                            <Link href="/contact-us" className="w-inline-block">
+                                                <Image
+                                                    src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e51d8ba178421e5a3e8949_header%20menu%20image.jpg"
+                                                    alt=""
+                                                    width={1000}
+                                                    height={1000}
+                                                    className="menu-contact-wrap-image"
+                                                />
+                                            </Link>
+                                        </figure>
+                                    </div>
+                                </div>
+                            </DropdownList>
+                        </Dropdown>
+
+                        {/* Industries */}
+                        <Dropdown>
+                            <DropdownToggle>
+                                <div className="link-text-wrap">
+                                    <p className="nav-item-title nav-title-white">Industries</p>
+                                </div>
+                                <svg
+                                    className="nav-dropdown-icon nav-dropdown-icon-white w-icon-dropdown-toggle"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="3"
+                                >
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                                <div className="nav-hover" />
+                            </DropdownToggle>
+                            <DropdownList className="nav-dropdown-list">
+                                <div className="nav-dropdown-column">
+                                    <div className="nav-dropdown-link-wrapper nav-dropdown-link-wrapper-single">
+                                        <ul role="list" className="menu-service-list menu-service-list-single">
+                                            {industries.map((ind, i) => (
+                                                <li key={i} className="menu-service-list-item menu-service-list-item-single">
+                                                    <Link href={ind.href} className="menu-service-list-card w-inline-block">
+                                                        <Image
+                                                            src={ind.icon}
+                                                            alt="icon"
+                                                            width={24}
+                                                            height={24}
+                                                            className="menu-service-list-icon"
+                                                        />
+                                                        <p className="menu-service-list-title">
+                                                            <strong className="bold-text-2 mb-0">{ind.title}</strong>
+                                                        </p>
+                                                        <Image
+                                                            src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68dd06f7fc82020459e20e4f_arrow-right-green.svg"
+                                                            alt="icon"
+                                                            width={16}
+                                                            height={16}
+                                                            className="menu-service-list-arrow-icon"
+                                                        />
+                                                    </Link>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </DropdownList>
+                        </Dropdown>
+
+                        {/* Our Approach */}
+                        <Dropdown>
+                            <DropdownToggle>
+                                <div className="link-text-wrap">
+                                    <p className="nav-item-title nav-title-white">Our approach</p>
+                                </div>
+                                <svg
+                                    className="nav-dropdown-icon nav-dropdown-icon-white w-icon-dropdown-toggle"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="3"
+                                >
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                                <div className="nav-hover" />
+                            </DropdownToggle>
+                            <DropdownList className="nav-dropdown-list">
+                                <div className="nav-dropdown-column">
+                                    <div className="nav-dropdown-link-wrapper nav-dropdown-link-wrapper-single">
+                                        <ul role="list" className="menu-service-list menu-service-list-single">
+                                            {approaches.map((a, i) => (
+                                                <li key={i} className="menu-service-list-item menu-service-list-item-single">
+                                                    <Link href={a.href} className="menu-service-list-card w-inline-block">
+                                                        <Image
+                                                            src={a.icon}
+                                                            alt="icon"
+                                                            width={24}
+                                                            height={24}
+                                                            className="menu-service-list-icon"
+                                                        />
+                                                        <p className="menu-service-list-title">
+                                                            <strong className="bold-text-2">{a.title}</strong>
+                                                            {a.desc}
+                                                        </p>
+                                                        <Image
+                                                            src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68dd06f7fc82020459e20e4f_arrow-right-green.svg"
+                                                            alt="icon"
+                                                            width={16}
+                                                            height={16}
+                                                            className="menu-service-list-arrow-icon"
+                                                        />
+                                                    </Link>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </DropdownList>
+                        </Dropdown>
+
+                        {/* Hire Talent */}
+                        <Dropdown className="mega-menu-wrap-dropdown">
+                            <DropdownToggle>
+                                <div className="link-text-wrap">
+                                    <p className="nav-item-title nav-title-white">Hire talent</p>
+                                </div>
+                                <svg
+                                    className="nav-dropdown-icon nav-dropdown-icon-white w-icon-dropdown-toggle"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="3"
+                                >
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                                <div className="nav-hover" />
+                            </DropdownToggle>
+                            <DropdownList className="mega-menu-wrap">
+                                <div className="mega-menu-container">
+                                    <div className="mega_menu-tab-wrap w-tabs">
+                                        <div className="mega_menu-tab-items w-tab-menu">
+                                            {hireTabs.map((tab, i) => (
+                                                <button
+                                                    key={i}
+                                                    type="button"
+                                                    onClick={() => setActiveHireTab(i)}
+                                                    className={`mega_menu-tab-item w-inline-block w-tab-link ${activeHireTab === i ? "w--current" : ""}`}
+                                                >
+                                                    <div className="menu-tab-card">
+                                                        <Image
+                                                            src={tab.icon}
+                                                            alt="icon"
+                                                            width={24}
+                                                            height={24}
+                                                            className="menu-service-list-icon"
+                                                        />
+                                                        <p className="menu-service-list-title">
+                                                            <strong className="bold-text-2 mb-0">{tab.label}</strong>
+                                                        </p>
+                                                        <Image
+                                                            src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68dd06f7fc82020459e20e4f_arrow-right-green.svg"
+                                                            alt="icon"
+                                                            width={16}
+                                                            height={16}
+                                                            className="menu-service-list-arrow-icon"
+                                                        />
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <div className="tabs-content-3 w-tab-content">
+                                            <div className="w-tab-pane w--tab-active">
+                                                <div className="menu-approach-list">
+                                                    <ul role="list" className="menu-service-list">
+                                                        {hireTabs[activeHireTab].items.map((item, i) => (
+                                                            <li key={i} className="menu-service-list-item">
+                                                                <Link
+                                                                    href="/contact-us"
+                                                                    className="menu-service-list-card w-inline-block"
+                                                                >
+                                                                    <Image
+                                                                        src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68dd06f7fc82020459e20e4f_arrow-right-green.svg"
+                                                                        alt="icon"
+                                                                        width={16}
+                                                                        height={16}
+                                                                        className="menu-service-list-arrow-icon"
+                                                                    />
+                                                                    <p className="menu-service-list-title">
+                                                                        <strong className="bold-text-2">{item.title}</strong>
+                                                                        {item.desc}
+                                                                    </p>
+                                                                </Link>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                                <Link href="/contact-us" className="contact-us-link w-inline-block">
+                                                    <div className="menu-contact-us-info">
+                                                        <Image
+                                                            src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/6900b1f84a6ad29e98a654dc_file-text.svg"
+                                                            alt="image"
+                                                            width={24}
+                                                            height={24}
+                                                            className="menu-service-list-icon"
+                                                        />
+                                                        <Image
+                                                            src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68dd06f7fc82020459e20e4f_arrow-right-green.svg"
+                                                            alt="icon"
+                                                            width={16}
+                                                            height={16}
+                                                            className="menu-service-list-arrow-icon"
+                                                        />
+                                                        <p className="menu-service-list-title">
+                                                            <strong className="bold-text-2">Contact Us</strong>
+                                                            Get in touch with our 24/7 active support team to get your query resolve.
+                                                        </p>
+                                                    </div>
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </DropdownList>
+                        </Dropdown>
+
+                        <Link
+                            href="https://www.notion.so/amentotech/Job-Board-AMENTO-TECH-2951664c06b48032a384e228b1deb169"
+                            target="_blank"
+                            className="nav-link nav-title-white w-nav-link"
+                        >
+                            Careers
+                        </Link>
+                    </nav>
+                    <div className="div-block-3 contact-us header-contact-us">
+                        <Link
+                            href="/contact-us"
+                            data-gn-book-meeting="modal"
+                            data-w-id="18496b83-ef74-3196-87a5-0e0002e3ed11"
+                            className="button-secondary-light nav-btn w-inline-block"
+                        >
+                            <div className="arrows-container cta">
+                                <Image
+                                    alt="Icon"
+                                    src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e4b7bde312a6e238715c90_email.svg"
+                                    width={16}
+                                    height={16}
+                                    className="dark-arrow _16 nav-icon-dark"
+                                />
+                                <Image
+                                    alt="Icon"
+                                    src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e51aa310530dbf53f8f4c2_email-black.svg"
+                                    width={16}
+                                    height={16}
+                                    className="arrow-button _16 nav-icon-dark"
+                                />
+                            </div>
+                            <div className="button-secondary-light-text-3 nav-btn">Get in Touch</div>
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Responsive menu */}
+                <div className="nav-menu-wrapper nav-menu-wrapper-responsive">
+                    <div className="header-logo">
+                        <Link href="/" aria-current="page" className="brand-2 w-nav-brand w--current">
+                            <Image
+                                alt=""
+                                src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/6944084a200d58ed37cd84ce_company-logo.svg"
+                                width={140}
+                                height={40}
+                                className="image-37"
+                            />
+                        </Link>
+                    </div>
+                    <nav
+                        role="navigation"
+                        className={`nav-menu-2 w-nav-menu ${mobileOpen ? "w--nav-menu-open" : ""}`}
+                    >
+                        {/* Mobile Our Services */}
+                        <div className={`dropdown mega-menu-wrap-dropdown ${mobileDropdowns.services ? "w--open" : ""}`}>
+                            <button
+                                type="button"
+                                className="dropdown-toggle w-dropdown-toggle"
+                                onClick={() => toggleMobileDropdown("services")}
+                            >
+                                <svg
+                                    className="nav-dropdown-icon w-icon-dropdown-toggle"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="3"
+                                >
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                                <div className="link-text-wrap">
+                                    <p className="nav-item-title">Our services</p>
+                                </div>
+                                <div className="nav-hover" />
+                            </button>
+                            <nav className={`mega-menu-wrap w-dropdown-list ${mobileDropdowns.services ? "w--open" : ""}`}>
+                                <div className="mega-menu-container">
+                                    <div className="nav-dropdown-column menu-left-side">
+                                        <div className="nav-dropdown-link-wrapper">
+                                            <ul role="list" className="menu-service-list">
+                                                {services.map((s, i) => (
+                                                    <li key={i} className="menu-service-list-item">
+                                                        <Link href={s.href} className="menu-service-list-card w-inline-block">
+                                                            <Image
+                                                                src={s.icon}
+                                                                alt="icon"
+                                                                width={24}
+                                                                height={24}
+                                                                className="menu-service-list-icon"
+                                                            />
+                                                            <p className="menu-service-list-title">
+                                                                <strong className="bold-text-2">{s.title} </strong>
+                                                                {s.desc}
+                                                            </p>
+                                                            <Image
+                                                                src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68dd06f7fc82020459e20e4f_arrow-right-green.svg"
+                                                                alt="icon"
+                                                                width={16}
+                                                                height={16}
+                                                                className="menu-service-list-arrow-icon"
+                                                            />
+                                                        </Link>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                        <Link
+                                            href="/coming-soon"
+                                            className="button-primary button-primary-gray w-inline-block"
+                                        >
+                                            <div className="text-block-12">View More</div>
+                                            <Image
+                                                loading="lazy"
+                                                src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68dbd9d8c78e82683455072e_arrow-top-right.svg"
+                                                alt="arrow-top-right"
+                                                width={16}
+                                                height={16}
+                                                className="button-icon"
+                                            />
+                                        </Link>
+                                    </div>
+                                    <div className="menu-right-side">
+                                        <div className="menu-company-header">
+                                            <h3 className="menu-company-header-title">Not Sure where to start?</h3>
+                                            <p className="menu-company-header-description">
+                                                Connect with our experts to receive a free estimate and streamline your workflow at no extra cost. Why wait? Give it a try today!
+                                            </p>
+                                        </div>
+                                        <div className="header-link-wrapper">
+                                            <div className="contact-us-card">
+                                                <div className="contact-us-card-icon menu-contact-us-card-icon">
+                                                    <Image
+                                                        src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e51aa310530dbf53f8f4c2_email-black.svg"
+                                                        alt="icon"
+                                                        width={20}
+                                                        height={20}
+                                                        className="image-22 menu-contact-us-card-icon-img"
+                                                    />
+                                                </div>
+                                                <Link
+                                                    href="mailto:sales@amentotech.com"
+                                                    className="link-2 menu-contact-us-card-link"
+                                                >
+                                                    Talk To Sales{" "}
+                                                    <span className="menu-contact-us-card-link-info menu-contact-us-card-link-info-header">
+                                                        sales@amentotech.com
+                                                    </span>
+                                                </Link>
+                                            </div>
+                                        </div>
+                                        <figure className="menu-contact-wrap">
+                                            <Link
+                                                href="https://amentotech.com/get-a-quote"
+                                                target="_blank"
+                                                className="w-inline-block"
+                                            >
+                                                <Image
+                                                    loading="lazy"
+                                                    src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e51d8ba178421e5a3e8949_header%20menu%20image.jpg"
+                                                    alt=""
+                                                    width={280}
+                                                    height={160}
+                                                    className="menu-contact-wrap-image"
+                                                />
+                                            </Link>
+                                        </figure>
+                                    </div>
+                                </div>
+                            </nav>
+                        </div>
+
+                        {/* Mobile Industries */}
+                        <div className={`dropdown ${mobileDropdowns.industries ? "w--open" : ""}`}>
+                            <button
+                                type="button"
+                                className="dropdown-toggle w-dropdown-toggle"
+                                onClick={() => toggleMobileDropdown("industries")}
+                            >
+                                <svg
+                                    className="nav-dropdown-icon w-icon-dropdown-toggle"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="3"
+                                >
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                                <div className="link-text-wrap">
+                                    <p className="nav-item-title">Who we serve</p>
+                                </div>
+                                <div className="nav-hover" />
+                            </button>
+                            <nav className={`nav-dropdown-list w-dropdown-list ${mobileDropdowns.industries ? "w--open" : ""}`}>
+                                <div className="nav-dropdown-column">
+                                    <div className="nav-dropdown-link-wrapper nav-dropdown-link-wrapper-single">
+                                        <ul role="list" className="menu-service-list menu-service-list-single">
+                                            {industries.map((ind, i) => (
+                                                <li key={i} className="menu-service-list-item menu-service-list-item-single">
+                                                    <Link href={ind.href} className="menu-service-list-card w-inline-block">
+                                                        <Image
+                                                            src={ind.icon}
+                                                            alt="icon"
+                                                            width={24}
+                                                            height={24}
+                                                            className="menu-service-list-icon"
+                                                        />
+                                                        <p className="menu-service-list-title">
+                                                            <strong className="bold-text-2">{ind.title}</strong>
+                                                            Tailored solutions to boost your business growth in the new market of technology.
+                                                        </p>
+                                                        <Image
+                                                            src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68dd06f7fc82020459e20e4f_arrow-right-green.svg"
+                                                            alt="icon"
+                                                            width={16}
+                                                            height={16}
+                                                            className="menu-service-list-arrow-icon"
+                                                        />
+                                                    </Link>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </nav>
+                        </div>
+
+                        {/* Mobile Our Approach */}
+                        <div className={`dropdown mega-menu-wrap-dropdown ${mobileDropdowns.approach ? "w--open" : ""}`}>
+                            <button
+                                type="button"
+                                className="dropdown-toggle w-dropdown-toggle"
+                                onClick={() => toggleMobileDropdown("approach")}
+                            >
+                                <svg
+                                    className="nav-dropdown-icon w-icon-dropdown-toggle"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="3"
+                                >
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                                <div className="link-text-wrap">
+                                    <p className="nav-item-title">Our approach</p>
+                                </div>
+                                <div className="nav-hover" />
+                            </button>
+                            <nav className={`mega-menu-wrap w-dropdown-list ${mobileDropdowns.approach ? "w--open" : ""}`}>
+                                <div className="mega-menu-container">
+                                    <ul role="list" className="menu-service-list menu-service-list-single">
+                                        {approaches.map((a, i) => (
+                                            <li key={i} className="menu-service-list-item menu-service-list-item-single">
+                                                <Link href={a.href} className="menu-service-list-card w-inline-block">
+                                                    <Image
+                                                        src={a.icon}
+                                                        alt="icon"
+                                                        width={24}
+                                                        height={24}
+                                                        className="menu-service-list-icon"
+                                                    />
+                                                    <p className="menu-service-list-title">
+                                                        <strong className="bold-text-2">{a.title}</strong>
+                                                        {a.desc}
+                                                    </p>
+                                                    <Image
+                                                        src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68dd06f7fc82020459e20e4f_arrow-right-green.svg"
+                                                        alt="icon"
+                                                        width={16}
+                                                        height={16}
+                                                        className="menu-service-list-arrow-icon"
+                                                    />
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </nav>
+                        </div>
+
+                        {/* Mobile Hire Talent */}
+                        <div className={`dropdown mega-menu-wrap-dropdown ${mobileDropdowns.hire ? "w--open" : ""}`}>
+                            <button
+                                type="button"
+                                className="dropdown-toggle w-dropdown-toggle"
+                                onClick={() => toggleMobileDropdown("hire")}
+                            >
+                                <svg
+                                    className="nav-dropdown-icon w-icon-dropdown-toggle"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="3"
+                                >
+                                    <polyline points="6 9 12 15 18 9" />
+                                </svg>
+                                <div className="link-text-wrap">
+                                    <p className="nav-item-title">Hire talent</p>
+                                </div>
+                                <div className="nav-hover" />
+                            </button>
+                            <nav className={`mega-menu-wrap w-dropdown-list ${mobileDropdowns.hire ? "w--open" : ""}`}>
+                                <div className="mega-menu-container">
+                                    <div className="mega_menu-tab-wrap w-tabs">
+                                        <div className="mega_menu-tab-items w-tab-menu">
+                                            {hireTabs.map((tab, i) => (
+                                                <button
+                                                    key={i}
+                                                    type="button"
+                                                    onClick={() => setActiveHireTab(i)}
+                                                    className={`mega_menu-tab-item w-inline-block w-tab-link ${activeHireTab === i ? "w--current" : ""}`}
+                                                >
+                                                    <div className="menu-tab-card">
+                                                        <Image
+                                                            src={tab.icon}
+                                                            alt="icon"
+                                                            width={24}
+                                                            height={24}
+                                                            className="menu-service-list-icon"
+                                                        />
+                                                        <Image
+                                                            src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68dd06f7fc82020459e20e4f_arrow-right-green.svg"
+                                                            alt="icon"
+                                                            width={16}
+                                                            height={16}
+                                                            className="menu-service-list-arrow-icon"
+                                                        />
+                                                        <p className="menu-service-list-title">
+                                                            <strong className="bold-text-2 mb-0">{tab.label}</strong>
+                                                        </p>
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <div className="tabs-content-3 w-tab-content">
+                                            <div className="w-tab-pane w--tab-active">
+                                                <div className="menu-approach-list">
+                                                    <ul role="list" className="menu-service-list">
+                                                        {hireTabs[activeHireTab].items.map((item, i) => (
+                                                            <li key={i} className="menu-service-list-item">
+                                                                <Link
+                                                                    href="/contact-us"
+                                                                    className="menu-service-list-card w-inline-block"
+                                                                >
+                                                                    <Image
+                                                                        src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68dd06f7fc82020459e20e4f_arrow-right-green.svg"
+                                                                        alt="icon"
+                                                                        width={16}
+                                                                        height={16}
+                                                                        className="menu-service-list-arrow-icon"
+                                                                    />
+                                                                    <p className="menu-service-list-title">
+                                                                        <strong className="bold-text-2">{item.title}</strong>
+                                                                        {item.desc}
+                                                                    </p>
+                                                                </Link>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                                <Link href="/contact-us" className="contact-us-link w-inline-block">
+                                                    <div className="menu-contact-us-info">
+                                                        <Image
+                                                            src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/6900b1f84a6ad29e98a654dc_file-text.svg"
+                                                            alt="image"
+                                                            width={24}
+                                                            height={24}
+                                                            className="menu-service-list-icon"
+                                                        />
+                                                        <p className="menu-service-list-title">
+                                                            <strong className="bold-text-2">Contact Us</strong>
+                                                            Get in touch with our 24/7 active support team to get your query resolve.
+                                                        </p>
+                                                        <Image
+                                                            src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68dd06f7fc82020459e20e4f_arrow-right-green.svg"
+                                                            alt="icon"
+                                                            width={16}
+                                                            height={16}
+                                                            className="menu-service-list-arrow-icon"
+                                                        />
+                                                    </div>
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </nav>
+                        </div>
+
+                        <Link
+                            href="https://www.notion.so/amentotech/Job-Board-AMENTO-TECH-2951664c06b48032a384e228b1deb169"
+                            target="_blank"
+                            className="nav-link w-nav-link"
+                        >
+                            Careers
+                        </Link>
+                        <div className="div-block-3 contact-us">
+                            <Link href="#" className="link-block w-inline-block">
+                                <div className="div-block-4">
+                                    <Image
+                                        loading="lazy"
+                                        src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68e51aa310530dbf53f8f4c2_email-black.svg"
+                                        alt="icon"
+                                        width={20}
+                                        height={20}
+                                        className="image-7"
+                                    />
+                                </div>
+                                <div className="button-text">
+                                    <span className="text-span-7">Contact Us</span> Get in Touch
+                                </div>
+                            </Link>
+                        </div>
+                    </nav>
+                    <button
+                        type="button"
+                        className="menu-button-2 w-nav-button"
+                        aria-expanded={mobileOpen}
+                        aria-label="menu"
+                        onClick={() => setMobileOpen(!mobileOpen)}
+                    >
+                        <Image
+                            alt=""
+                            src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/694a88ebb10efa81d36a292a_hamberger-icon.png"
+                            width={24}
+                            height={24}
+                            className="menu-button-icon"
+                        />
+                        <Image
+                            alt="icon"
+                            src="https://cdn.prod.website-files.com/68d276a2319df5bdcc752026/68ff282557646735ec3746f4_close.svg"
+                            width={24}
+                            height={24}
+                            className="menu-button-icon-open"
+                        />
+                        <div className="icon w-icon-nav-menu" />
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
