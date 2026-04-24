@@ -66,25 +66,97 @@ export default function Preloader() {
     if (hidden) return null;
 
     return (
-        <div ref={preloaderRef} className="preloader amt-loading">
-            <div className="loader-svg">
-                <svg viewBox="0 0 1000 1000" preserveAspectRatio="none">
-                    <path
-                        ref={svgPathRef}
-                        id="svg"
-                        d="M0 971.8326S175 947.3259 500 947.3259s500 19.8363 500 19.8363V0H0Z"
-                    />
-                </svg>
-            </div>
-            <div ref={logoTextRef} className="logo-text-wrapper">
-                <div className="logo-text-inner">
-                    {"AmentoTech".split("").map((char, i) => (
-                        <div key={i} className="logo-text-span">
-                            {char}
-                        </div>
-                    ))}
+        <>
+            <div ref={preloaderRef} className="preloader amt-loading">
+                <div className="loader-svg">
+                    <svg viewBox="0 0 1000 1000" preserveAspectRatio="none">
+                        <path
+                            ref={svgPathRef}
+                            id="svg"
+                            d="M0 971.8326S175 947.3259 500 947.3259s500 19.8363 500 19.8363V0H0Z"
+                        />
+                    </svg>
+                </div>
+                <div ref={logoTextRef} className="logo-text-wrapper">
+                    <div className="logo-text-inner">
+                        {"AmentoTech".split("").map((char, i) => (
+                            <div key={i} className="logo-text-span">
+                                {char}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
-        </div>
+            <style>{`
+                html.wf-design-mode .preloader {
+                    display: none;
+                }
+                .loader-svg:before,
+                .loader-svg:after {
+                    content: none;
+                }
+                .loader-svg svg {
+                    position: absolute;
+                    top: 0;
+                    width: 100%;
+                    height: 110vh;
+                    fill: #121212;
+                }
+                .logo-text-inner .logo-text-span {
+                    -webkit-animation: loading 1s infinite alternate;
+                    animation: loading 1s infinite alternate;
+                }
+                .logo-text-inner .logo-text-span:nth-child(2) {
+                    -webkit-animation-delay: 0.1s;
+                    animation-delay: 0.1s;
+                }
+                .logo-text-inner .logo-text-span:nth-child(3) {
+                    -webkit-animation-delay: 0.2s;
+                    animation-delay: 0.2s;
+                }
+                .logo-text-inner .logo-text-span:nth-child(4) {
+                    -webkit-animation-delay: 0.3s;
+                    animation-delay: 0.3s;
+                }
+                .logo-text-inner .logo-text-span:nth-child(5) {
+                    -webkit-animation-delay: 0.4s;
+                    animation-delay: 0.4s;
+                }
+                .logo-text-inner .logo-text-span:nth-child(6) {
+                    -webkit-animation-delay: 0.5s;
+                    animation-delay: 0.5s;
+                }
+                .logo-text-inner .logo-text-span:nth-child(7) {
+                    -webkit-animation-delay: 0.6s;
+                    animation-delay: 0.6s;
+                }
+                .logo-text-inner .logo-text-span:nth-child(8) {
+                    -webkit-animation-delay: 0.7s;
+                    animation-delay: 0.7s;
+                }
+                .logo-text-inner .logo-text-span:nth-child(9) {
+                    -webkit-animation-delay: 0.8s;
+                    animation-delay: 0.8s;
+                }
+                .logo-text-inner .logo-text-span:nth-child(10) {
+                    -webkit-animation-delay: 0.9s;
+                    animation-delay: 0.9s;
+                }
+                body:has(.preloader.amt-loading) {
+                    overflow: hidden;
+                }
+                body:has(.preloader.amt-loading[style*="display: none"]) {
+                    overflow: auto;
+                }
+                @keyframes loading {
+                    0% {
+                        opacity: 1;
+                    }
+                    100% {
+                        opacity: 0;
+                    }
+                }
+            `}</style>
+        </>
     );
 }
